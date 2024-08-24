@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Shop Homepage - Start Bootstrap Template</title>
+        <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+        <!-- default header name is X-CSRF-TOKEN -->
+        <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="/admin/css/styles.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" th:replace="fragments/mainNav :: mainNav"></nav>
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Shop in style</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+                </div>
+            </div>
+        </header>
+        <!-- Section-->
+        <div class="container">
+            <h1 class="text-center pt-5 fw-bold">신상품</h1>
+        </div>
+        <section class="pb-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center"> <!--row-cols-2 row-cols-md-3 row-cols-xl-4-->
+                    <!--이부분이 반복 됨 th:each를 여기에 쓰면될듯-->
+                    <div class="col mb-5" th:each="item : ${items}">
+                        <!--카드 한개-->
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <a th:href="@{/item/{itemId}(itemId=${item.id})}">
+                            <img class="card-img-top" th:if="${!item.imageFiles.isEmpty()}"
+                                 th:src="@{|/images/${item.imageFiles.get(0).getStoredFileName()}|}"
+                                 src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..."
+                                width="50" height="257"/>
+                            </a>
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-start mb-3">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder" th:text="${item.name}">Fancy Product</h5>
+                                    <!-- Product price-->
+                                    <span th:text="${item.price} + 원">
+                                    $40.00 - $80.00
+                                    </span>
+                                </div>
+                                <!-- 비 로그인의 빈 하트-->
+                                <th:block sec:authorize="isAnonymous()">
+                                    <svg th:id="heart + ${item.id}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-heart" viewBox="0 0 16 16" th:onclick="|handleHeartClick(${item.id})|" style="cursor: pointer">
+                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                    </svg>
+                                </th:block>
+
+                                <!--검은하트-->
+                                <th:block sec:authorize="isAuthenticated()">
+                                    <div th:if="${user.wishLists.size() != 0}">
+                                        <th:block th:if="${itemInWishListMap[item.getId()] == true}">
+                                            <svg th:id="heart + ${item.id}" xmlns="http://www.w3.org/2000/svg"
+                                                 width="16" height="16"
+                                                 fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16"
+                                                 style="cursor: pointer" th:onclick="|handleHeartClick(${item.id})|">
+                                                <path fill-rule="evenodd"
+                                                      d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                                            </svg>
+                                        </th:block>
+                                        <th:block th:if="${itemInWishListMap[item.getId()] == false}">
+                                            <svg th:id="heart + ${item.id}" xmlns="http://www.w3.org/2000/svg"
+                                                 width="16" height="16"
+                                                 fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16"
+                                                 th:onclick="|handleHeartClick(${item.id})|" style="cursor: pointer">
+                                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                            </svg>
+                                        </th:block>
+                                    </div>
+                                </th:block>
+
+                                <!--빈 하트-->
+<!--                                <th:block sec:authorize="isAuthenticated()">-->
+<!--                                    <div th:each="wishList : ${user.wishLists}">-->
+<!--                                        <th:block th:if="${wishList.item.id != item.id}">-->
+<!--                                            <svg th:id="heart + ${item.id}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"-->
+<!--                                                 class="bi bi-heart" viewBox="0 0 16 16" th:onclick="|handleHeartClick(${item.id})|" style="cursor: pointer">-->
+<!--                                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>-->
+<!--                                            </svg>-->
+<!--                                        </th:block>-->
+<!--                                    </div>-->
+
+                                </th:block>
+
+                                <!-- 찜 리스트 없을 경우 빈하트-->
+                                <th:block sec:authorize="isAuthenticated()">
+                                    <div th:if="${user.wishLists.size() == 0}">
+                                        <svg th:id="heart + ${item.id}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                             class="bi bi-heart" viewBox="0 0 16 16" th:onclick="|handleHeartClick(${item.id})|" style="cursor: pointer">
+                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                        </svg>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+<!--                    <div class="col mb-5">-->
+<!--                        <div class="card h-100">-->
+<!--                            &lt;!&ndash; Sale badge&ndash;&gt;-->
+<!--                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>-->
+<!--                            &lt;!&ndash; Product image&ndash;&gt;-->
+<!--                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />-->
+<!--                            &lt;!&ndash; Product details&ndash;&gt;-->
+<!--                            <div class="card-body p-4">-->
+<!--                                <div class="text-center">-->
+<!--                                    &lt;!&ndash; Product name&ndash;&gt;-->
+<!--                                    <h5 class="fw-bolder">Special Item</h5>-->
+<!--                                    &lt;!&ndash; Product reviews&ndash;&gt;-->
+<!--                                    <div class="d-flex justify-content-center small text-warning mb-2">-->
+<!--                                        <div class="bi-star-fill"></div>-->
+<!--                                        <div class="bi-star-fill"></div>-->
+<!--                                        <div class="bi-star-fill"></div>-->
+<!--                                        <div class="bi-star-fill"></div>-->
+<!--                                        <div class="bi-star-fill"></div>-->
+<!--                                    </div>-->
+<!--                                    &lt;!&ndash; Product price&ndash;&gt;-->
+<!--                                    <span class="text-muted text-decoration-line-through">$20.00</span>-->
+<!--                                    $18.00-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; Product actions&ndash;&gt;-->
+<!--                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">-->
+<!--                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+            </div>
+            <div>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${!items.hasPrevious()} ? disabled">
+                        <a class="page-link" th:href="@{|?page=${items.number - 1}|}">이전</a>
+                    </li>
+                    <li class="page-item" th:each="number : ${#numbers.sequence(0, items.totalPages - 1)}"
+                        th:if="${items.number - 2 < number and number < items.number + 2}"
+                        th:classappend="${items.number == number} ? active">
+                        <a class="page-link" th:text="${number + 1}" th:href="@{|?page=${number}|}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${!items.hasNext()} ? disabled">
+                        <a class="page-link" th:href="@{|?page=${items.number + 1}|}">다음</a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer th:replace="fragments/mainFooter :: mainFooter"></footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="/admin/js/scripts.js"></script>
+        <script th:inline="javascript">
+            console.log("확인용");
+            if ([[${name}]] == null) {
+                console.log("null");
+            }else if ([[${name}]] != null) {
+                console.log("not null");
+            }
+
+            function handleHeartClick(itemId) {
+
+
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
+                alert('하트를 클릭했습니다!');
+
+                let heartIcon = $("#heart" + itemId);
+                if (document.getElementById("heart"+itemId).classList.contains("bi-heart")) {
+                    console.log("The class is 'bi bi-heart'.");
+                    heartIcon.replaceWith(`
+                    <svg id="heart${itemId}" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                         fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16"
+                         style="cursor: pointer" onclick="handleHeartClick(${itemId})">
+                        <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314" />
+                    </svg>
+                `);
+
+                    $.ajax({
+                        type: 'post',
+                        url: '/wishList/add',
+                        data: JSON.stringify(
+                            {
+                                "itemId": itemId
+                            }
+                        ),
+                        contentType: "application/json; charset=utf-8",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(header, token);
+                        }
+                    }).done(function (data) {
+                        console.log(data);
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error("AJAX 요청 실패: ", textStatus, errorThrown);
+                        alert("찜 리스트 저장 실패: " + textStatus);
+                    });
+                }else if (document.getElementById("heart"+itemId).classList.contains("bi-heart-fill")) {
+                    console.log("The class is 'bi bi-heart-fill'.");
+                    heartIcon.replaceWith(`
+                <svg id="heart${itemId}" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                     fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16" onclick="handleHeartClick(${itemId})"
+                     style="cursor: pointer">
+                     <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                </svg>
+            `);
+                    $.ajax({
+                        type: 'post',
+                        url: '/wishList/delete',
+                        data: JSON.stringify(
+                            {
+                                "itemId": itemId
+                            }
+                        ),
+                        contentType: "application/json; charset=utf-8",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(header, token);
+                        }
+                    }).done(function (data) {
+                        console.log("data : ", data);
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error("AJAX 요청 실패: ", textStatus, errorThrown);
+                        alert("삭제 실패: " + textStatus);
+                    });
+                }else {
+                    console.log("The element does not have 'bi-heart' or 'bi-heart-fill' class.");
+                }
+
+            }
+        </script>
+    </body>
+
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+        <!-- default header name is X-CSRF-TOKEN -->
+        <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+        <title>Shop Item - Start Bootstrap Template</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="/admin/css/styles.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" th:replace="fragments/mainNav :: mainNav"></nav>
+        <!-- Product section-->
+        <section class="py-5" th:object="${item}">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="row gx-4 gx-lg-5 align-items-center">
+                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0"
+                                               th:src="@{|/images/*{imageFiles.get(0).getStoredFileName()}|}"
+                                               src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="..." /></div>
+                    <div class="col-md-6">
+                        <div class="small mb-1">쇼핑몰(이름)</div>
+                        <h1 class="display-5 fw-bolder" th:text="*{name}">상품명</h1>
+                        <div class="fs-5 mb-5">
+                            <p th:text="*{price} + '원'">가격</p>
+                        </div>
+                        <p class="lead" th:text="*{content}">상품 설명</p>
+                        <div class="d-flex align-items-center justify-content-start mb-3">
+                            <p class="text-start mb-0 align-self-center" style="width: 100px;">사이즈</p>
+                            <div class="d-flex align-items-center ms-3">
+                                <button id="sizeS" name="sizeS" type="button" class="btn me-2"
+                                        style="width: 60px; border: 1px solid #ccc" onclick="selectSize('S')">S</button>
+                                <button id="sizeM" name="sizeM" type="button" class="btn me-2"
+                                        style="width: 60px; border: 1px solid #ccc" onclick="selectSize('M')">M</button>
+                                <button id="sizeL" name="sizeL" type="button" class="btn me-2"
+                                        style="width: 60px; border: 1px solid #ccc" onclick="selectSize('L')">L</button>
+                                <button id="sizeXL" name="sizeXL" type="button" class="btn me-2"
+                                        style="width: 60px; border: 1px solid #ccc" onclick="selectSize('XL')">XL</button>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <form th:action method="post">
+                                <!--TODO selectedSize에 값 넣는거까진 함, selectedSize의 값을 서버로 넘겨서 cart에도 size 저장해야함-->
+                                <input id="selectedSize" name="selectedSize" type="hidden">
+                                <div class="d-flex align-items-center justify-content-start mb-5">
+                                    <p class="text-start mb-0 align-self-center" style="width: 100px;">개수</p>
+                                    <div class="ms-3">
+                                        <input id="quantity" class="form-control text-center me-3"  name="quantity" type="num" value="1" style="max-width: 3rem" />
+                                    </div>
+                                </div>
+                                <button id="saveCart" class="btn btn-outline-dark flex-shrink-0" type="button" onclick="saveToCart()">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    장바구니
+                                </button>
+                                <button class="btn btn-outline-dark flex-shrink-0" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    바로구매
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 장바구니 저장 알림 Modal -->
+        <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cartModalLabel">알림</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        장바구니에 저장되었습니다.
+                    </div>
+                    <div class="modal-footer d-flex">
+                        <a href="/cart" class="btn btn-primary">장바구니로 이동</a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">쇼핑 계속하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 사이즈 선택 알림 Modal -->
+        <div class="modal fade" id="selectSizeModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="selectSizeModalLabel">알림</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        사이즈를 선택해주세요.
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Related items section-->
+        <section class="py-5 bg-light">
+            <div class="container px-4 px-lg-5 mt-5">
+                <h2 class="fw-bolder mb-4">Related products</h2>
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">Fancy Product</h5>
+                                    <!-- Product price-->
+                                    $40.00 - $80.00
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">Special Item</h5>
+                                    <!-- Product reviews-->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                    </div>
+                                    <!-- Product price-->
+                                    <span class="text-muted text-decoration-line-through">$20.00</span>
+                                    $18.00
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">Sale Item</h5>
+                                    <!-- Product price-->
+                                    <span class="text-muted text-decoration-line-through">$50.00</span>
+                                    $25.00
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">Popular Item</h5>
+                                    <!-- Product reviews-->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                    </div>
+                                    <!-- Product price-->
+                                    $40.00
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer th:replace="fragments/mainFooter :: mainFooter"></footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="/admin/js/scripts.js"></script>
+        <script th:inline="javascript">
+
+            function selectSize(size) {
+                const sizeButtons = ["sizeS", "sizeM", "sizeL", "sizeXL"];
+
+                sizeButtons.forEach(id => {
+                    document.getElementById(id).style.border = "1px solid #ccc";
+                });
+
+                document.getElementById("size" + size).style.border = "1px solid black";
+
+                document.getElementById("selectedSize").value = size;
+                console.log("size : ", size);
+            }
+
+            function saveToCart() {
+
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
+                var size = $("#selectedSize").val();
+                var quantity = $("#quantity").val();
+                console.log("size : ", size);
+                console.log("quantity : ", quantity);
+                console.log("item.id : ", [[${item.id}]]);
+
+                if (!size) {
+                    $("#selectSizeModal").modal("show");
+                    return;
+                }
+
+                $.ajax({
+                    type: 'post',
+                    url: '/item/' + [[${item.id}]],
+                    data: JSON.stringify(
+                        {
+                            "size": size,
+                            "quantity": quantity
+                        }),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'text',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader(header, token);
+                    }
+                }).done(function (data) {
+                    console.log("저장 성공");
+                    console.log("data : ", data);
+                    $('#cartModal').modal('show');
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX 요청 실패: ", textStatus, errorThrown);
+                    alert("장바구니 저장 실패: " + textStatus);
+                });
+            }
+        </script>
+    </body>
+</html>

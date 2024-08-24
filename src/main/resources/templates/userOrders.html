@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <!--    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>-->
+  <!--    &lt;!&ndash; default header name is X-CSRF-TOKEN &ndash;&gt;-->
+  <!--    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+  <title>Shop Homepage - Start Bootstrap Template</title>
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <!-- Bootstrap icons-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="/admin/css/styles.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+<body class="d-flex flex-column min-vh-100 ">
+
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light" th:replace="fragments/mainNav :: mainNav"></nav>
+<h2 class="text-center py-lg-5 mt-5">주문 목록</h2>
+<div class="container my-4" style="padding-left: 160px; padding-right: 160px">
+<!--  &lt;!&ndash; 주문내역 제목 &ndash;&gt;-->
+<!--  <div class="d-flex justify-content-between align-items-center mb-3">-->
+<!--    <h3>주문내역</h3>-->
+<!--    <button class="btn btn-success">조회하기</button>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; 기간 선택 &ndash;&gt;-->
+<!--  <div class="d-flex justify-content-between mb-3">-->
+<!--    <div class="btn-group">-->
+<!--      <button type="button" class="btn btn-outline-secondary">최대(5년)</button>-->
+<!--      <button type="button" class="btn btn-outline-secondary">7월</button>-->
+<!--      <button type="button" class="btn btn-outline-secondary">6월</button>-->
+<!--      <button type="button" class="btn btn-outline-secondary">5월</button>-->
+<!--    </div>-->
+<!--    <div class="input-group" style="max-width: 300px;">-->
+<!--      <select class="form-select">-->
+<!--        <option>2019-08</option>-->
+<!--      </select>-->
+<!--      <span class="input-group-text">-</span>-->
+<!--      <select class="form-select">-->
+<!--        <option>2024-08</option>-->
+<!--      </select>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; 필터 옵션 &ndash;&gt;-->
+<!--  <div class="d-flex justify-content-start mb-3">-->
+<!--    <button class="btn btn-primary me-2">전체</button>-->
+<!--    <button class="btn btn-outline-primary me-2">스마일프레시</button>-->
+<!--    <button class="btn btn-outline-primary me-2">스마일배송</button>-->
+<!--    <button class="btn btn-outline-primary">당일배송</button>-->
+<!--  </div>-->
+
+  <!-- 주문목록 -->
+  <th:block th:if="${userOrderListDTO.userOrderDetailDTOList.get(0).date != null}">
+    <div class="card mb-3" th:each="orderList : ${userOrderListDTO.userOrderDetailDTOList}">
+      <div class="card-header d-flex justify-content-between">
+        <span th:text="${orderList.date}">주문 날짜</span>
+        <a href="#" class="btn btn-link">주문상세</a>
+      </div>
+      <div class="card-body">
+        <div class="d-flex m-2" th:each="orderDetailList : ${orderList.orderDTOList} ">
+          <img src="https://via.placeholder.com/100x100" class="me-4" alt="상품 이미지"
+               th:src="@{|/images/${orderDetailList.getStoredFileName()}|}" width="100" height="100">
+          <div class="flex-grow-1">
+            <h5 class="card-title" th:text="${orderDetailList.itemName}">상품명</h5>
+            <p class="card-title" th:text="${orderDetailList.size}">사이즈</p>
+            <p class="card-text" th:text="${orderDetailList.price} + 원 + ' / ' + ${orderDetailList.quantity} + 개">가격 / 개수</p>
+            <p class="align-middle" th:if="${orderDetailList.orderStatus.name()} == PREPARE">상품 준비중</p> <!--상태-->
+            <p class="align-middle" th:if="${orderDetailList.orderStatus.name()} == DELIVERY">배송 중</p> <!--상태-->
+            <p class="align-middle" th:if="${orderDetailList.orderStatus.name()} == COPLETE">배송 완료</p> <!--상태-->
+          </div>
+          <div class="d-flex flex-column justify-content-between">
+            <button class="btn btn-outline-primary">문의하기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </th:block>
+  <th:block th:if="${userOrderListDTO.userOrderDetailDTOList.get(0).date == null}">
+    <p class="text-center mb-2 mt-lg-5">주문내역이 없습니다.</p>
+    <div class="d-flex justify-content-center">
+      <button type="button" class="btn btn-light start-50 btn-lg w-25" th:onclick="|location.href='@{/}'|">홈으로 가기</button>
+    </div>
+  </th:block>
+</div>
+
+<!-- Footer-->
+<footer th:replace="fragments/mainFooter :: mainFooter"></footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="/admin/js/scripts.js"></script>
+</body>
+</html>

@@ -209,4 +209,19 @@ public class AdminController {
         return "redirect:/admin/orders";
     }
 
+    /**
+     * 상품 수정
+     */
+    @GetMapping("/admin/item/{itemId}/edit")
+    public String editItem(
+
+            @PathVariable Long itemId, Model model) {
+
+        Item item = itemService.findById(itemId);
+        model.addAttribute("item", item);
+
+
+        return "editItem";
+    }
+
 }

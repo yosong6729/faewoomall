@@ -145,4 +145,17 @@ public class AdminController {
         return "redirect:/user/{userId}/edit";
     }
 
+    /**
+     * 회원 권한 변경
+     */
+    @PostMapping("/user/role/edit")
+    public String editUserRole(
+            @RequestParam List<String> userIdList,
+            @RequestParam String role) {
+
+        userService.editUserRole(userIdList, role);
+
+        return "redirect:/users";
+    }
+
 }

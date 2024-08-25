@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="mainNav">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" th:href="@{/}" href="#!">Start Bootstrap</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#!">All Products</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#!">Popular Items</a></li>
+                        <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="adminMenu" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자 메뉴</a>
+                    <ul class="dropdown-menu" aria-labelledby="adminMenu">
+                        <li><a class="dropdown-item" href="#!">주문 현황</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" th:onclick="|location.href='@{/item/add}'|" href="#!">상품 등록</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="category" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">상품 종류</a>
+                    <ul class="dropdown-menu" aria-labelledby="category">
+                        <li><a class="dropdown-item" th:href="@{/TOP}" >상의</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item"  th:href="@{/PANTS}">바지</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <th:block sec:authorize="isAuthenticated()">
+                    <a class="navbar-brand" th:text="${name} + 님"></a>
+                    <button class="btn btn-light me-2" type="button" th:onclick="|location.href='@{/logout}'|">
+                        로그아웃
+                    </button>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="myPageDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">마이 페이지</a>
+                            <ul class="dropdown-menu" aria-labelledby="myPageDropdown">
+                                <li><a class="dropdown-item" th:href="@{/cart}" href="#!">장바구니</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" th:href="@{/order/list}" href="#!">주문 목록</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" th:href="@{/wishList}" href="#!">찜 리스트</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </th:block>
+                <th:block sec:authorize="isAnonymous()">
+                    <button class="btn btn-light me-2" type="button" th:onclick="|location.href='@{/login}'|">
+                        로그인
+                    </button>
+                    <button class="btn btn-light" type="button" th:onclick="|location.href='@{/join}'|">
+                        회원가입
+                    </button>
+                </th:block>
+            </form>
+        </div>
+    </div>
+</nav>
+</html>

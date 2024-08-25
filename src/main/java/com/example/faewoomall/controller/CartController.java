@@ -1,16 +1,19 @@
 package com.example.faewoomall.controller;
 
 import com.example.faewoomall.domain.User;
+import com.example.faewoomall.dto.CartIdDTO;
 import com.example.faewoomall.dto.CustomOAuth2User;
 import com.example.faewoomall.dto.CustomUserDetails;
 import com.example.faewoomall.service.CartService;
 import com.example.faewoomall.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -52,5 +55,13 @@ public class CartController {
         model.addAttribute("totalOrderAmount", totalOrderAmount);
 
         return "cart";
+    }
+
+    @PostMapping ("/cart/delete")
+    @ResponseBody
+    public ResponseEntity<String> deleteCartItem(@RequestBody CartIdDTO cartIdDTO) {
+        log.info("cartId = {}", cartIdDTO.getCartId());
+        cartService.deleteCartById(cartIdDTO.getCartId());
+        return ResponseEntity.ok("상품이 성공적으로 삭제되었습니다.");
     }
 }

@@ -74,6 +74,75 @@ public class AdminController {
         return new UrlResource("file:" + fileStoreService.getFullPath(fileName));
     }
 
+    /**
+     * 관리자 페이지(처음에는 상품 등록 페이지)
+     */
+    @GetMapping("/item/add")
+    public String addItem(Model model) {
 
+        model.addAttribute("item", new Item());
+
+        return "addItem";
+    }
+
+    @ModelAttribute("saleStatus")
+    public SaleStatus[] saleStatus() {
+        return SaleStatus.values();
+    }
+
+    @ModelAttribute("categories")
+    public Category[] categories() {
+        return Category.values();
+    }
+
+    @PostMapping("/item/add")
+    public String addItem(@ModelAttribute AddItemDTO addItemDTO, Model model) throws IOException {
+
+        log.info("item = {}", addItemDTO);
+
+        itemService.addItem(addItemDTO);
+
+        return "redirect:/item/add";
+    }
+
+
+    /**
+     * 회원 삭제
+     */
+    @PostMapping("/user/delete")
+    public String deleteUser(@RequestParam List<String> userIdList) {
+        log.info("deleteUser메서드 실행");
+        for (String userId : userIdList) {
+            log.info("checkedUserId = {}", userId);
+        }
+
+        userService.deleteUser(userIdList);
+
+        return "redirect:/users";
+    }
+
+    /**
+     * 회원 수정 페이지
+     */
+    @GetMapping("/user/{userId}/edit")
+    public String editUserP(@PathVariable Long userId, Model model) {
+
+        User user = userService.findById(userId);
+        model.addAttribute("user", user);
+
+        return "editUser";
+    }
+
+    /**
+     * 회원 수정
+     */
+    @PutMapping("/user/{userId}/edit")
+    public String editUSer(@PathVariable Long userId, @ModelAttribute EditUserDTO editUserDTO) {
+
+        //editUserDTO에 user의 PK인 Id를 추가해서 User를 DB에서 가져오는게 좋은가?
+        userService.editUser(userId, editUserDTO);
+
+        return "redirect:/user/{userId}/edit";
+    }
 
 }

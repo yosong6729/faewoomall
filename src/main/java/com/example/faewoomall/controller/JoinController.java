@@ -46,7 +46,10 @@ public class JoinController {
             return "join";
         }
 
-        return "redirect:/"; //redirect 안하면 오류남 이유는??
+        // 에러가 없을 경우 리다이렉트 대신 alert 메시지를 띄우는 스크립트를 반환
+        model.addAttribute("message", "회원가입이 완료되었습니다.");
+        model.addAttribute("redirectUrl", "/");
+        return "redirect-with-message"; // 새로운 타임리프 템플릿 파일로 리턴
     }
 
     @PostMapping("/oauth2/joinProc")

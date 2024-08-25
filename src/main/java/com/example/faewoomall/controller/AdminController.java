@@ -158,4 +158,55 @@ public class AdminController {
         return "redirect:/users";
     }
 
+    /**
+     * 주문 목록 페이지
+     */
+    @GetMapping("/admin/orders")
+    public String orders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String keyword,
+            Model model) {
+
+
+        Page<Order> allOrder = null;
+
+        if (keyword == null) {
+            allOrder = orderService.findAll(page);
+
+        } else {
+            allOrder = orderService.searchingOrderList(page, keyword);
+        }
+
+        model.addAttribute("orders", allOrder);
+
+        return "orders";
+    }
+
+
+    /**
+     * 주문 상태 수정
+     */
+    @PostMapping("/admin/order/status/edit")
+    public String editOrderStatus(
+            @RequestParam List<String> orderIdList,
+            @RequestParam String orderStatus) {
+
+        orderService.editOrderStatus(orderIdList, orderStatus);
+
+        log.info("종료");
+
+        return "redirect:/admin/orders";
+    }
+
+    /**
+     * 주문 목록 삭제
+     */
+    @PostMapping("/admin/order/delete")
+    public String deleteOrder(@RequestParam List<String> orderIdList) {
+
+        orderService.deleteOrder(orderIdList);
+
+        return "redirect:/admin/orders";
+    }
+
 }

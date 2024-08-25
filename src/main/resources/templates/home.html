@@ -181,11 +181,11 @@
 
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
-                alert('찜 리스트에 저장하였습니다.');
 
                 let heartIcon = $("#heart" + itemId);
                 if (document.getElementById("heart"+itemId).classList.contains("bi-heart")) {
                     console.log("The class is 'bi bi-heart'.");
+                    alert('찜 리스트에 저장하였습니다.');
                     heartIcon.replaceWith(`
                     <svg id="heart${itemId}" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                          fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16"
@@ -213,6 +213,7 @@
                         alert("찜 리스트 저장 실패: " + textStatus);
                     });
                 }else if (document.getElementById("heart"+itemId).classList.contains("bi-heart-fill")) {
+                    alert('찜 리스트에서 삭제 했습니다.');
                     console.log("The class is 'bi bi-heart-fill'.");
                     heartIcon.replaceWith(`
                 <svg id="heart${itemId}" xmlns="http://www.w3.org/2000/svg" width="16" height="16"

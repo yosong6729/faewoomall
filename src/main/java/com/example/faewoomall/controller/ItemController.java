@@ -84,7 +84,9 @@ public class ItemController {
 
         log.info("email = {}, role = {}", email, role);
 
-        model.addAttribute("name", user.getName());
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
         model.addAttribute("items", allItem);
         model.addAttribute("user", user);
         model.addAttribute("itemInWishListMap", itemInWishListMap);
@@ -142,8 +144,10 @@ public class ItemController {
         }
 
         log.info("email = {}, role = {}", email, role);
+        if (user != null) {
+            model.addAttribute("name", user.getName());
 
-        model.addAttribute("name", user.getName());
+        }
         model.addAttribute("items", allItem);
         model.addAttribute("itemInWishListMap", itemInWishListMap);
         model.addAttribute("user", user);

@@ -16,8 +16,10 @@
 |![소셜로그인(구글)](https://github.com/user-attachments/assets/e5fc5a4b-f1f8-4602-a0a4-ebc910ea7ddc)|![상품 목록 조회(카테고리 별)](https://github.com/user-attachments/assets/65bad217-6db6-4c52-9c6f-148c1f31d94a)|![찜 기능_](https://github.com/user-attachments/assets/aa1f34eb-4f2b-4d3d-8b8a-9917f61c9691)|
 |<small>상품검색 및 장바구니</small>|<small>주문 및 결제(배송지 변경)<small>|<small>주문 관리(주문 상태 변경)</small>|
 |![상품 검색 및 장바구니](https://github.com/user-attachments/assets/f701cb3a-f30e-4ec7-b574-769b75130fab)|![주문 및 결제(배송지 변경)](https://github.com/user-attachments/assets/71ee54ab-4c43-46cf-80b6-4be4c151e010)|![주문 관리(주문 상태 변경)](https://github.com/user-attachments/assets/e96b8a35-d805-431a-b5ea-f2c5f430b20e)|
-|<small>상품 등록</small>|<small>회원관리(계정 탈퇴 관리자 권한 부여)<small>|
-|![상품 등록](https://github.com/user-attachments/assets/65d5ffd2-301f-4e18-a165-f399b8d9fe26)|![회원 관리(회원 탈퇴 및 관리자 권한 부여)](https://github.com/user-attachments/assets/ba9a9964-6553-4d50-8ea5-832f98f9470f)|
+|<small>상품 등록</small>|<small>상품 수정</small>|<small>회원관리(계정 탈퇴 관리자 권한 부여)<small>|
+|![상품 등록](https://github.com/user-attachments/assets/65d5ffd2-301f-4e18-a165-f399b8d9fe26)|![상품 수정](https://github.com/user-attachments/assets/8d21c18a-6171-4382-a086-3568b4962e0d)|![회원 관리(회원 탈퇴 및 관리자 권한 부여)](https://github.com/user-attachments/assets/ba9a9964-6553-4d50-8ea5-832f98f9470f)|
+|<small>상품 삭제</small>|
+![상품 삭제](https://github.com/user-attachments/assets/d24eb376-aa68-4a01-a776-d02442751d64)
 
 ### 🛠기술 스택
 OS | Windows 10

@@ -45,6 +45,7 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
+    //장바구니 구매시 주문정보 저장
     @Transactional
     public void orderSave(OrderSaveDTO orderSaveDTO, User user, List<Cart> cartList) {
 

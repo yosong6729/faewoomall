@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -231,4 +232,27 @@ public class AdminController {
         return "editItem";
     }
 
+    /**
+     * 상품 수정
+     */
+    @PostMapping("/admin/item/{itemId}/edit")
+    public String editItem(
+            @PathVariable Long itemId,
+            @ModelAttribute AddItemDTO addItemDTO) throws IOException {
+
+        itemService.editItem(addItemDTO, itemId);
+
+        return "redirect:/admin/item/{itemId}/edit";
+    }
+
+    /**
+     * 상품 삭제
+     */
+    @PostMapping("/admin/item/delete")
+    public ResponseEntity<?> deleteItem(@RequestBody List<Long> itemIdList) {
+
+        itemService.deleteItem(itemIdList);
+
+        return ResponseEntity.ok("상품 삭제 성공");
+    }
 }

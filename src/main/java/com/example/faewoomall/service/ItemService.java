@@ -19,10 +19,20 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ItemService {
 
     private final ItemRepository itemRepository;
     private final FileStoreService fileStoreService;
+    private final UploadFileRepository uploadFileRepository;
+
+    public Page<Item> pagedItemList(int page, String keyword) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+
+        PageRequest pageRequest = PageRequest.of(page, 8, Sort.by(sorts));
+        return itemRepository.findByNameContains(keyword, pageRequest);
+    }
 
     public Page<Item> findAll(int page) {
         List<Sort.Order> sorts = new ArrayList<>();

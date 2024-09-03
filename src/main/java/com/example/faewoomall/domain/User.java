@@ -32,12 +32,12 @@ public class User {
     @CreationTimestamp
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Cart> carts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Order> orders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user") //
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE) //
     private List<WishList> wishLists = new ArrayList<>();
 }

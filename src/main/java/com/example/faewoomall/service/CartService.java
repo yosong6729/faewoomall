@@ -19,6 +19,10 @@ public class CartService {
 
     private final CartRepository cartRepository;
 
+    public void deleteCartById(Long itemId) {
+        cartRepository.deleteById(itemId);
+    }
+
     public void cartListDelete(OrderListDTO orderListDTOList) {
 
         List<OrderSaveDetailDTO> orderSaveDetailDTOList = orderListDTOList.getOrderSaveDetailDTOList();

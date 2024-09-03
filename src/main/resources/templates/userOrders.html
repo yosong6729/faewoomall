@@ -61,7 +61,6 @@
     <div class="card mb-3" th:each="orderList : ${userOrderListDTO.userOrderDetailDTOList}">
       <div class="card-header d-flex justify-content-between">
         <span th:text="${orderList.date}">주문 날짜</span>
-        <a href="#" class="btn btn-link">주문상세</a>
       </div>
       <div class="card-body">
         <div class="d-flex m-2" th:each="orderDetailList : ${orderList.orderDTOList} ">
@@ -74,9 +73,6 @@
             <p class="align-middle" th:if="${orderDetailList.orderStatus.name()} == PREPARE">상품 준비중</p> <!--상태-->
             <p class="align-middle" th:if="${orderDetailList.orderStatus.name()} == DELIVERY">배송 중</p> <!--상태-->
             <p class="align-middle" th:if="${orderDetailList.orderStatus.name()} == COPLETE">배송 완료</p> <!--상태-->
-          </div>
-          <div class="d-flex flex-column justify-content-between">
-            <button class="btn btn-outline-primary">문의하기</button>
           </div>
         </div>
       </div>

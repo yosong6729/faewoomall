@@ -57,6 +57,7 @@ public class OrderService {
             order.setOrderStatus(OrderStatus.PREPARE);
             order.setStoredFileName(cart.getItem().getImageFiles().get(0).getStoredFileName());
             order.setQuantity(cart.getQuantity());
+            order.setSize(cart.getSize());
             order.setZipcode(orderSaveDTO.getZipcode());
             order.setStreetAdr(orderSaveDTO.getStreetAdr());
             order.setDetailAdr(orderSaveDTO.getDetailAdr());

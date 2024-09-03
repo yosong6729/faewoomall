@@ -35,7 +35,7 @@ public class OrderService {
     public Page<Order> findAll(int page) {
 
         List<Sort.Order> sort = new ArrayList<>();
-        sort.add(Sort.Order.by("createDate"));
+        sort.add(Sort.Order.desc("createDate"));
 
         PageRequest pageRequest = PageRequest.of(page, 6, Sort.by(sort));
         return orderRepository.findAll(pageRequest);

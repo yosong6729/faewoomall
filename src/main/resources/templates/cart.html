@@ -90,12 +90,6 @@
         console.log('totalOrderAmount', totalOrderAmount);
     </script>
     <script>
-        document.getElementById('pay__do').addEventListener('click', function() {
-            // 폼 데이터 설정 및 전송
-            document.getElementById('paymentForm').submit();
-        });
-    </script>
-    <script>
         function deleteCartItem(cartId) {
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");

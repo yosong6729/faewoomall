@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,11 +34,18 @@ public class MainController {
      * 처음 메인 페이지
      */
     @GetMapping("/")
-    public String homeP(@RequestParam(defaultValue = "0") int page,
+    public String homeP(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String keyword,
             /*@AuthenticationPrincipal CustomOAuth2User customOAuth2User,*/
             /*Authentication authentication,*/
                         Model model) {
-        Page<Item> allItem = itemService.findAll(page);
+        Page<Item> allItem = null;
+        if (keyword != null) {
+            allItem = itemService.pagedItemList(page, keyword);
+        } else {
+            allItem = itemService.findAll(page);
+        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

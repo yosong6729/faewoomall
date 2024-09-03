@@ -57,9 +57,20 @@ public class AdminController {
      * 상품 목록 조회
      */
     @GetMapping("/items")
-    public String itemList(@RequestParam(defaultValue = "0") int page, Model model) {
-        Page<Item> all = itemService.findAll(page);
-        model.addAttribute("items", all);
+    public String itemList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String keyword,
+            Model model) {
+
+        Page<Item> itemList = null;
+
+        if (keyword != null) {
+            itemList = itemService.pagedItemList(page, keyword);
+        } else {
+            itemList = itemService.findAll(page);
+        }
+
+        model.addAttribute("items", itemList);
 
         return "items";
     }

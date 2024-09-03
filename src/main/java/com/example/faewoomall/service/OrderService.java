@@ -1,11 +1,12 @@
 package com.example.faewoomall.service;
 
-import com.example.faewoomall.domain.Cart;
-import com.example.faewoomall.domain.Order;
-import com.example.faewoomall.domain.OrderStatus;
-import com.example.faewoomall.domain.User;
+import com.example.faewoomall.domain.*;
+import com.example.faewoomall.dto.DirectOrderDTO;
 import com.example.faewoomall.dto.OrderSaveDTO;
+import com.example.faewoomall.repository.ItemRepository;
 import com.example.faewoomall.repository.OrderRepository;
+import com.example.faewoomall.repository.UserRepository;
+import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,17 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
+
+    public Page<Order> findByIdEqual(User user, int page) {
+        List<Sort.Order> sort = new ArrayList<>();
+        sort.add(Sort.Order.desc("createDate"));
+
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(sort));
+
+        return orderRepository.findByUserEquals(user, pageRequest);
+    }
 
     public Page<Order> searchingOrderList(int page, String keyword) {
         List<Sort.Order> sort = new ArrayList<>();
@@ -84,5 +97,27 @@ public class OrderService {
         for (String orderId : orderIdList) {
             orderRepository.deleteById(Long.valueOf(orderId));
         }
+    }
+
+    //바로 결제
+    public void directOrderSave(DirectOrderDTO directOrderDTO) {
+
+        User user = userRepository.findUserById(directOrderDTO.getUserId());
+        Item item = itemRepository.findItemById(directOrderDTO.getItemId());
+
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setItemName(item.getName());
+        order.setStoredFileName(item.getImageFiles().get(0).getStoredFileName());
+        order.setPrice(item.getPrice());
+        order.setSize(directOrderDTO.getSize());
+        order.setQuantity(directOrderDTO.getQuantity());
+        order.setOrderStatus(OrderStatus.PREPARE);
+        order.setZipcode(directOrderDTO.getZipcode());
+        order.setStreetAdr(directOrderDTO.getStreetAdr());
+        order.setDetailAdr(directOrderDTO.getDetailAdr());
+
+        orderRepository.save(order);
     }
 }

@@ -84,6 +84,9 @@ public class PaymentController {
         return payment;
     }
 
+    /**
+     * 장바구니 결제
+     */
     @PostMapping("/order/payment")
     public ResponseEntity<Map<String, List<OrderSaveDetailDTO>>> paymentComplete(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,

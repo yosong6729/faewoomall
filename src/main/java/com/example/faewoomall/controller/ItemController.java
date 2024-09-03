@@ -207,18 +207,20 @@ public class ItemController {
         log.info("quantity = {}", saveToCartDTO.getQuantity());
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = null;
+        User user = null;
         try {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
             username = oAuth2User.getOAuth2Id();
+            user = userService.findByOAuth2Id(username);
             log.info("oAuth2User.getUsername(), username = {}, {}", oAuth2User.getOAuth2Id(), username);
         } catch (ClassCastException e) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             username = userDetails.getUsername();
+            user = userService.findByEmail(username);
             log.info("userDetails.getUsername() = {}", userDetails.getUsername());
         }
 
         log.info("size = {}", saveToCartDTO.getSize());
-        User user = userService.findByEmail(username);
         cartService.saveCart(user, item, saveToCartDTO.getQuantity(), saveToCartDTO.getSize());
 
         return ResponseEntity.ok("저장 완료");

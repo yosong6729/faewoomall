@@ -32,7 +32,7 @@
                         <div class="small mb-1">Faewoomall</div>
                         <h1 class="display-5 fw-bolder" th:text="*{name}">상품명</h1>
                         <div class="fs-5 mb-5">
-                            <p th:text="*{price} + '원'">가격</p>
+                            <p id="price" th:text="*{price} + '원'">가격</p>
                         </div>
                         <p class="lead" th:text="*{content}">상품 설명</p>
                         <div class="d-flex align-items-center justify-content-start mb-3">
@@ -49,9 +49,12 @@
                             </div>
                         </div>
                         <div class="d-flex">
-                            <form th:action method="post">
-                                <!--TODO selectedSize에 값 넣는거까진 함, selectedSize의 값을 서버로 넘겨서 cart에도 size 저장해야함-->
+                            <form id="paymentForm" action="/direct/payment" method="post">
+                                <input id="totalOrderAmount" name="totalOrderAmount" type="hidden">
                                 <input id="selectedSize" name="selectedSize" type="hidden">
+                                <input id="itemId" name="itemId" type="hidden" th:value="${item.id}">
+                                <input id="userId" name="userId" type="hidden">
+                                <input type="hidden" th:name = "${_csrf.parameterName}" th:value="${_csrf.token}" />
                                 <div class="d-flex align-items-center justify-content-start mb-5">
                                     <p class="text-start mb-0 align-self-center" style="width: 100px;">개수</p>
                                     <div class="ms-3">
@@ -61,7 +64,8 @@
                                 <button id="saveCart" class="btn btn-outline-dark flex-shrink-0" type="button" onclick="saveToCart()">
                                     장바구니
                                 </button>
-                                <button class="btn btn-outline-dark flex-shrink-0" type="submit">바로구매
+                                <button class="btn btn-outline-dark flex-shrink-0" type="button" onclick="directPayment()">
+                                    바로구매
                                 </button>
                             </form>
                         </div>
@@ -111,6 +115,22 @@
         <!-- Core theme JS-->
         <script src="/admin/js/scripts.js"></script>
         <script th:inline="javascript">
+
+            function directPayment() {
+                let size = $("#selectedSize").val();
+                if (!size) {
+                    $("#selectSizeModal").modal("show");
+                    return;
+                }
+
+                let quantity = $("#quantity").val();
+                let price = [[${item.price}]];
+                let totalOrderAmount = quantity * price;
+                document.getElementById("totalOrderAmount").value = totalOrderAmount;
+                document.getElementById("userId").value = [[${userId}]];
+
+                $("#paymentForm").submit();
+            }
 
             function selectSize(size) {
                 const sizeButtons = ["sizeS", "sizeM", "sizeL", "sizeXL"];

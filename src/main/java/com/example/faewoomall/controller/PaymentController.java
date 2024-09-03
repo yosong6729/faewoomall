@@ -1,9 +1,11 @@
 package com.example.faewoomall.controller;
 
 import com.example.faewoomall.domain.Cart;
+import com.example.faewoomall.domain.Item;
 import com.example.faewoomall.domain.User;
 import com.example.faewoomall.dto.*;
 import com.example.faewoomall.service.CartService;
+import com.example.faewoomall.service.ItemService;
 import com.example.faewoomall.service.OrderService;
 import com.example.faewoomall.service.UserService;
 import com.siot.IamportRestClient.IamportClient;
@@ -36,6 +38,7 @@ public class PaymentController {
     private final UserService userService;
     private final OrderService orderService;
     private final CartService cartService;
+    private final ItemService itemService;
 
     private IamportClient iamportClinet;
 
@@ -72,6 +75,54 @@ public class PaymentController {
         model.addAttribute("cartsId", cartsId);
 
         return "payment";
+    }
+
+    /**
+     * 바로구매시 결제 페이지
+     */
+    @PostMapping("/direct/payment")
+    public String directPaymentP(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+            @ModelAttribute DirectPaymentRequestDTO directPaymentRequestDTO,
+            Model model) {
+
+        Long userId = null;
+        User user = null;
+
+        try {
+            String username = customUserDetails.getUsername();
+            user = userService.findByEmail(username);
+            userId = user.getId();
+        } catch (NullPointerException e) {
+            log.info("customUserDetails.getUsername() is null");
+        }
+
+        try {
+            String username = customOAuth2User.getOAuth2Id();
+            user = userService.findByOAuth2Id(username);
+        } catch (NullPointerException e) {
+            log.info("customOAuth2User.getUsername() is null");
+        }
+
+        Item item = itemService.findById(directPaymentRequestDTO.getItemId());
+
+        model.addAttribute("name", user.getName());
+        model.addAttribute("user", user);
+        model.addAttribute("totalOrderAmount", directPaymentRequestDTO.getTotalOrderAmount());
+        model.addAttribute("item", item);
+        model.addAttribute("quantity", directPaymentRequestDTO.getQuantity());
+        model.addAttribute("size", directPaymentRequestDTO.getSelectedSize());
+
+        return "payment";
+    }
+
+    @PostMapping("/order/direct/payment")
+    public ResponseEntity<?> directPayment(@RequestBody DirectOrderDTO directOrderDTO) {
+
+        orderService.directOrderSave(directOrderDTO);
+
+        return ResponseEntity.ok("주문 저장 성공");
     }
 
     @PostMapping("/payment/validation/{imp_uid}")
@@ -151,6 +202,18 @@ public class PaymentController {
 
         return "editDeliveryAdr";
     }
+
+    @Getter
+    @Setter
+    public static class DirectPaymentRequestDTO {
+
+        private String userId;
+        private int totalOrderAmount;
+        private Long itemId;
+        private int quantity;
+        private String selectedSize;
+    }
+
 
 
 

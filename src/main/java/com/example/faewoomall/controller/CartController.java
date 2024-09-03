@@ -42,7 +42,7 @@ public class CartController {
 
         try {
             String username = customOAuth2User.getOAuth2Id();
-            user = userService.findByEmail(username);
+            user = userService.findByOAuth2Id(username);
             userId = user.getId();
         } catch (NullPointerException e) {
             log.info("customOAuth2User.getUsername() is null");

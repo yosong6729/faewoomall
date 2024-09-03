@@ -167,7 +167,6 @@ public class AdminController {
             @RequestParam(required = false) String keyword,
             Model model) {
 
-
         Page<Order> allOrder = null;
 
         if (keyword == null) {

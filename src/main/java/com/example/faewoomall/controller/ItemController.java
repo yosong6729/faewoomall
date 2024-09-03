@@ -184,7 +184,9 @@ public class ItemController {
         log.info("item");
 
         Item item = itemService.findById(itemId); //Optional 처리해야힘
-        model.addAttribute("name", user.getName());
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
         model.addAttribute("item", item);
         model.addAttribute("userId", userId);
 

@@ -5,6 +5,7 @@ import com.example.faewoomall.domain.OrderStatus;
 import com.example.faewoomall.domain.User;
 import com.example.faewoomall.dto.CustomOAuth2User;
 import com.example.faewoomall.dto.CustomUserDetails;
+import com.example.faewoomall.service.OrderService;
 import com.example.faewoomall.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,10 +13,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +29,17 @@ import java.util.List;
 public class OrderController {
 
     private final UserService userService;
+    private final OrderService orderService;
 
     /**
      * 사용자 주문목록 이동
      */
     @GetMapping("/order/list")
-    public String myOrderP(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                           @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
-                           Model model) throws JsonProcessingException {
+    public String myOrderP(
+            @RequestParam(defaultValue = "0") int page,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+            Model model) throws JsonProcessingException {
 
         Long userId = null;
         User user = null;
@@ -47,26 +53,19 @@ public class OrderController {
 
         try {
             String username = customOAuth2User.getOAuth2Id();
-            user = userService.findByEmail(username);
-            userId = user.getId();
+            user = userService.findByOAuth2Id(username);
         } catch (NullPointerException e) {
             log.info("customOAuth2User.getUsername() is null");
         }
 
         model.addAttribute("orders", user.getOrders());
 
-        //같은 order의 같은날짜끼리 묶어야함
-        //컨틀러단에서 order의 createDate의 날짜가 같으면 하나로 묶기?
-        //그거에 맞기 DTO생성해서 보내줘야하나?
-        List<Order> orders = user.getOrders();
+        Page<Order> orders = orderService.findByIdEqual(user, page);
         UserOrderListDTO userOrderListDTO = new UserOrderListDTO();
         UserOrderDetailDTO userOrderDetailDTO = new UserOrderDetailDTO();
         String createDate = null;
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for (Order order : orders) {
-            //만약 order의 createDate값이 같으면
-            //원래 있던 List<OrderDTO>에 add
-            //다르면
             OrderDTO orderDTO = new OrderDTO();
             orderDTO.setItemName(order.getItemName());
             orderDTO.setQuantity(order.getQuantity());

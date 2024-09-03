@@ -212,13 +212,10 @@ public class AdminController {
      * 상품 수정
      */
     @GetMapping("/admin/item/{itemId}/edit")
-    public String editItem(
-
-            @PathVariable Long itemId, Model model) {
+    public String editItem(@PathVariable Long itemId, Model model){
 
         Item item = itemService.findById(itemId);
         model.addAttribute("item", item);
-
 
         return "editItem";
     }
